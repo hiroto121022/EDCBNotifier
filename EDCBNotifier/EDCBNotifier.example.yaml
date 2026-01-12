@@ -12,13 +12,14 @@
         # ====================  全般  ====================
 
         # ***** 通知タイプ *****
-        # LINE (LINE Notify)・Discord (Discord Webhook)・Tweet (ツイート)・Toot（トゥート）・DirectMessage (ダイレクトメッセージ) ・MastodonDirectMessage（Mastodon のダイレクトメッセージ）から選択します。
+        # LINE (LINE Notify)・Discord (Discord Webhook)・Slack (Slack Webhook)・Tweet (ツイート)・Toot（トゥート）・DirectMessage (ダイレクトメッセージ) ・MastodonDirectMessage（Mastodon のダイレクトメッセージ）から選択します。
         # [] 内にカンマ区切りで複数の通知タイプを設定できます。
 
         # ex (LINE Notify): ['LINE']
         # ex (LINE Notify と Discord Webhook): ['LINE', 'Discord']
+        # ex (LINE Notify と Slack Webhook): ['LINE', 'Slack']
         # ex (ツイートとダイレクトメッセージ): ['Tweet', 'DirectMessage']
-        # ex (すべてに通知): ['LINE', 'Discord', 'Tweet', 'DirectMessage']
+        # ex (すべてに通知): ['LINE', 'Discord', 'Slack', 'Tweet', 'DirectMessage']
 
         'notify_type': ['LINE', 'Discord', 'Tweet', 'DirectMessage'],
 
@@ -143,6 +144,19 @@
         # Webhook URL は Discord のチャンネル設定の [連携サービス] → [ウェブフック] にて発行したものを設定します。
         # Webhook URL の発行方法は Readme.md を参照してください。
         'webhook_url': 'YOUR_DISCORD_ACCESS_TOKEN',
+    },
+
+    'slack': {
+
+        # ===================  Slack Webhook  ===================
+
+        # ***** Slack の Webhook URL *****
+        # Webhook URL は Slack の Incoming Webhook アプリを使用して発行したものを設定します。
+        # Webhook URL の発行方法: https://api.slack.com/messaging/webhooks
+        # 1. Slack ワークスペースで Incoming Webhook アプリをインストール
+        # 2. 投稿先のチャンネルを選択
+        # 3. 発行された Webhook URL をコピーして以下に設定
+        'webhook_url': 'YOUR_SLACK_WEBHOOK_URL',
     },
 
     'twitter': {

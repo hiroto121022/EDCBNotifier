@@ -7,6 +7,7 @@ import sys
 
 from SendDiscord import Discord
 from SendLINE import LINE
+from SendSlack import Slack
 from SendTwitter import Twitter
 from SendMastodon import Mastodon
 
@@ -144,6 +145,28 @@ def main():
                 # ステータスが 200 or 204（成功）
                 print(f'[Discord] Result: Success (Code: {result_discord["status"]})')
                 print(f'[Discord] Message: {result_discord["message"]}')
+
+    # Slack にメッセージを送信
+    if 'Slack' in CONFIG['general']['notify_type']:
+
+        print('-' * TERMINAL_WIDTH)
+
+        slack = Slack(CONFIG['slack']['webhook_url'])
+
+        try:
+            result_slack:dict = slack.sendMessage(message, image_path=image)
+        except Exception as error:
+            print(f'[Slack] Result: Failed')
+            print(f'[Slack] {colorama.Fore.RED}Error: {error.args[0]}')
+        else:
+            if result_slack['status'] != 200:
+                # ステータスが 200 以外（失敗）
+                print(f'[Slack] Result: Failed (Code: {result_slack["status"]})')
+                print(f'[Slack] {colorama.Fore.RED}Error: {result_slack["message"]}')
+            else:
+                # ステータスが 200（成功）
+                print(f'[Slack] Result: Success (Code: {result_slack["status"]})')
+                print(f'[Slack] Message: {result_slack["message"]}')
 
     # Twitter API を初期化
     if 'Tweet' in CONFIG['general']['notify_type'] or 'DirectMessage' in CONFIG['general']['notify_type']:
