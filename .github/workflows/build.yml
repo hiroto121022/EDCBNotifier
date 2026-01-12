@@ -38,3 +38,13 @@ jobs:
         with:
           name: EDCBNotifier-exe
           path: EDCBNotifier/dist/*.exe
+
+      - name: List output files
+        working-directory: EDCBNotifier
+        run: |
+          echo "=== root ==="
+          dir
+          echo "=== EDCBNotifier.dist ==="
+          dir EDCBNotifier.dist
+          echo "=== onefile-build ==="
+          dir EDCBNotifier.onefile-build
