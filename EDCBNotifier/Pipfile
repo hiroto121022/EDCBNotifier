@@ -4,7 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [scripts]
-build = "nuitka --mingw64 --follow-imports --onefile --windows-icon-from-ico='EDCBNotifier.ico' EDCBNotifier.py"
+build = "nuitka --mingw64 --standalone --onefile --follow-imports --windows-icon-from-ico='EDCBNotifier.ico' --windows-disable-console EDCBNotifier.py"
 
 [packages]
 colorama = "*"
