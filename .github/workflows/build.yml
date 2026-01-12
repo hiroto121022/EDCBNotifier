@@ -1,20 +1,11 @@
-name: Build EDCBNotifier exe
-
-on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
-
 jobs:
   build:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Python 3.9
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.9"
 
@@ -22,11 +13,13 @@ jobs:
         run: pip install pipenv
 
       - name: Sync dependencies
+        working-directory: EDCBNotifier
         env:
           PIPENV_VENV_IN_PROJECT: "true"
         run: pipenv sync
 
       - name: Build exe
+        working-directory: EDCBNotifier
         run: pipenv run build
 
       - name: Upload exe
@@ -34,4 +27,4 @@ jobs:
         with:
           name: EDCBNotifier-exe
           path: |
-            dist/*.exe
+            EDCBNotifier/dist/*.exe
