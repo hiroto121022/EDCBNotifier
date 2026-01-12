@@ -157,16 +157,16 @@ def main():
             result_slack:dict = slack.sendMessage(message, image_path=image)
         except Exception as error:
             print(f'[Slack] Result: Failed')
-            print(f'[Slack] {colorama.Fore.RED}Error: {error.args[0]}')
+            print(f'[Slack] {colorama.Fore.RED}Error: {error}')
         else:
             if result_slack['status'] != 200:
                 # ステータスが 200 以外（失敗）
                 print(f'[Slack] Result: Failed (Code: {result_slack["status"]})')
-                print(f'[Slack] {colorama.Fore.RED}Error: {result_slack["message"]}')
+                print(f'[Slack] {colorama.Fore.RED}Response: {result_slack["response"]}')
             else:
                 # ステータスが 200（成功）
                 print(f'[Slack] Result: Success (Code: {result_slack["status"]})')
-                print(f'[Slack] Message: {result_slack["message"]}')
+                print(f'[Slack] Response: {result_slack["response"]}')
 
     # Twitter API を初期化
     if 'Tweet' in CONFIG['general']['notify_type'] or 'DirectMessage' in CONFIG['general']['notify_type']:
