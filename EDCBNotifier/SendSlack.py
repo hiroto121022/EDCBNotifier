@@ -1,8 +1,8 @@
 
-import io
 import json
 import os
-import requests
+import urllib.request
+import urllib.error
 
 
 class Slack:
@@ -17,6 +17,7 @@ class Slack:
         """
 
         self.webhook_url = webhook_url
+        print(f'[Slack] Webhook URL: {webhook_url[:50]}...')  # デバッグ用
 
 
     def sendMessage(self, message:str, image_path:str=None) -> dict:
@@ -28,7 +29,7 @@ class Slack:
             image_path (str, optional): 送信する画像のファイルパス. Defaults to None.
 
         Returns:
-            dict: ステータスコードとエラーメッセージが入った辞書
+            dict: ステータスコードとレスポンスが入った辞書
         """
 
         # Slack の Incoming Webhook にメッセージを送信
@@ -36,9 +37,9 @@ class Slack:
 
         # メッセージペイロードを作成
         payload = {
+            'text': message,
             'username': 'EDCBNotifier',
             'icon_url': 'https://raw.githubusercontent.com/tsukumijima/EDCBNotifier/master/EDCBNotifier/EDCBNotifier.png',
-            'text': message,
         }
 
         # 画像も送信する場合
@@ -50,20 +51,35 @@ class Slack:
             # 画像を送信したい場合は、Slack API の files.upload を使用する必要があります。
             pass
 
-        # Webhook を送信
-        response = requests.post(self.webhook_url, json=payload)
+        print(f'[Slack] Sending message...')
+        print(f'[Slack] Payload: {json.dumps(payload, ensure_ascii=False)[:100]}...')
 
-        # 失敗した場合はエラーメッセージを取得
-        if response.status_code != 200:
-            try:
-                message = response.text
-            except:
-                message = 'Unknown error'
-        else:
-            message = 'Success'
+        # JSONエンコード
+        json_data = json.dumps(payload).encode('utf-8')
 
-        # ステータスコードとエラーメッセージを返す
-        return {
-            'status': response.status_code,
-            'message': message,
-        }
+        # リクエストを作成
+        request = urllib.request.Request(
+            self.webhook_url,
+            data=json_data,
+            headers={'Content-Type': 'application/json'}
+        )
+
+        # リクエストを送信
+        try:
+            with urllib.request.urlopen(request) as response:
+                status_code = response.getcode()
+                response_body = response.read().decode('utf-8')
+                print(f'[Slack] Response status: {status_code}')
+                print(f'[Slack] Response body: {response_body}')
+                return {
+                    'status': status_code,
+                    'response': response_body
+                }
+        except urllib.error.HTTPError as e:
+            error_body = e.read().decode('utf-8')
+            print(f'[Slack] HTTP Error: {e.code}')
+            print(f'[Slack] Error response: {error_body}')
+            raise Exception(f'HTTP Error {e.code}: {error_body}')
+        except Exception as e:
+            print(f'[Slack] Exception: {str(e)}')
+            raise
