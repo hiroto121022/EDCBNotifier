@@ -29,9 +29,42 @@ jobs:
           PIPENV_VENV_IN_PROJECT: "true"
         run: pipenv sync
 
+      - name: Clean build directories
+        working-directory: EDCBNotifier
+        run: |
+          Write-Host "Cleaning build directories..."
+          if (Test-Path "EDCBNotifier.build") { 
+            Write-Host "Removing EDCBNotifier.build"
+            Remove-Item -Recurse -Force "EDCBNotifier.build" 
+          }
+          if (Test-Path "EDCBNotifier.dist") { 
+            Write-Host "Removing EDCBNotifier.dist"
+            Remove-Item -Recurse -Force "EDCBNotifier.dist" 
+          }
+          if (Test-Path "EDCBNotifier.onefile-build") { 
+            Write-Host "Removing EDCBNotifier.onefile-build"
+            Remove-Item -Recurse -Force "EDCBNotifier.onefile-build" 
+          }
+          if (Test-Path "EDCBNotifier.exe") { 
+            Write-Host "Removing EDCBNotifier.exe"
+            Remove-Item -Force "EDCBNotifier.exe" 
+          }
+          Write-Host "Clean completed"
+
       - name: Build exe
         working-directory: EDCBNotifier
-        run: pipenv run build
+        run: |
+          Write-Host "Starting Nuitka build..."
+          pipenv run build
+          Write-Host "Build completed"
+          Write-Host "Checking output..."
+          if (Test-Path "EDCBNotifier.exe") {
+            $fileInfo = Get-Item "EDCBNotifier.exe"
+            Write-Host "EDCBNotifier.exe found - Size: $($fileInfo.Length) bytes, Modified: $($fileInfo.LastWriteTime)"
+          } else {
+            Write-Host "ERROR: EDCBNotifier.exe not found!"
+            exit 1
+          }
 
       - name: Upload exe
         uses: actions/upload-artifact@v4
