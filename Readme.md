@@ -1,15 +1,35 @@
 
-# <img alt="Logo" src="EDCBNotifier/EDCBNotifier.png" height="26"> EDCBNotifier
+# <img alt="Logo" src="EDCBNotifier/EDCBNotifier.png" height="26"> EDCBNotifier (Fork)
 
 ![Screenshot](https://user-images.githubusercontent.com/39271166/88943606-a877c300-d2c6-11ea-8323-7914f78f50e0.png)
 ![Screenshot](https://user-images.githubusercontent.com/39271166/159143179-17aa0a99-a9a5-44d3-b8cc-a14efebd9cfc.png)
 
-**EDCB から LINE・Discord・Twitter に通知を送れるツールです。**
+**EDCB から LINE・Discord・Slack・Twitter に通知を送れるツールです。**
+
+## このフォーク版について
+
+このリポジトリは [tsukumijima/EDCBNotifier](https://github.com/tsukumijima/EDCBNotifier) のフォーク版です。
+
+### 追加機能
+
+- **Slack Webhook への通知対応** 🆕
+  - Slack の Incoming Webhook を使用して、EDCB からの通知を Slack にも送信できるようになりました
+  - LINE や Discord と同様に、Webhook URL を設定するだけで簡単に利用できます
+  - ワークスペースの任意のチャンネルに通知を送信可能です
+
+### オリジナル版との違い
+
+- Slack への通知機能を追加
+- Wine 環境での動作に対応（スタンドアロン実行ファイルとしてビルド）
+- その他、オリジナル版の機能はすべて維持されています
+
+---
 
 ## About・Feature
 
 - LINE (LINE Notify)
 - Discord (Discord Webhook)
+- Slack (Slack Webhook) 🆕
 - Twitter (ツイート)
 - Twitter (ダイレクトメッセージ)
 
@@ -29,6 +49,10 @@ LINE Notify は、アプリケーションからの通知を、指定したユ�
 **Discord へは Discord Webhook を使い通知します。**  
 管理者権限を持つサーバーであれば、各テキストチャンネルの設定から簡単に Webhook を設定できます。  
 自分用のサーバーを作成して、そこに Webhook を設定してみるのが一番手っ取り早いです。
+
+**Slack へは Slack Webhook (Incoming Webhook) を使い通知します。** 🆕  
+ワークスペースの管理者権限があれば、各チャンネルの設定から簡単に Webhook を設定できます。  
+EDCBNotifier 専用のチャンネルを作成して、そこに通知を送信するのがおすすめです。
 
 **Twitter へはツイートでの通知に加え、ダイレクトメッセージでの通知も可能です。**  
 ダイレクトメッセージは自分宛てに送ることも、ダイレクトメッセージを送信できる他のアカウントに送ることもできます。  
@@ -162,8 +186,8 @@ EDCBNotifier.example.yaml 自体をリネームしてもかまいませんが、
 
 EDCBNotifier.yaml のコメントにも説明や記述例が記載されていますので、そちらも参考にしてみてください。
 
-**通知タイプ** (notify_type) では、**LINE (LINE Notify)・Discord (Discord Webhook)・Tweet (ツイート)・DirectMessage (ダイレクトメッセージ) から通知先を選択します。**  
-デフォルト … 全てに通知する (`['LINE', 'Discord', 'Tweet', 'DirectMessage']`)
+**通知タイプ** (notify_type) では、**LINE (LINE Notify)・Discord (Discord Webhook)・Slack (Slack Webhook)・Tweet (ツイート)・DirectMessage (ダイレクトメッセージ) から通知先を選択します。**  
+デフォルト … 全てに通知する (`['LINE', 'Discord', 'Slack', 'Tweet', 'DirectMessage']`)
 
 **通知を行うイベント** (notify_event) では、**通知するイベントのオン・オフを設定できます。**  
 ここで設定したイベントだけが通知されます。設定しなかったイベントは通知されません。  
@@ -275,7 +299,33 @@ EDCBNotifier 用にしたいテキストチャンネルの設定画面を開き�
 LINE Notify のように、5つあるバッチファイルのうちのどれかを実行してみましょう。Webhook を設定したチャンネルに EDCBNotifier からの通知が届いていると思います。   
 Webhook を設定したチャンネルの通知設定を [すべてのメッセージ] にすると、通知が届いたときに PC やスマホの通知欄にも表示されます。
 
-### 5. Twitter (ツイート・ダイレクトメッセージ)
+### 5. Slack (Slack Webhook)
+
+Slack に通知を送信するには、Webhook（ウェブフック）を作成・管理できる権限を持っているワークスペースが必要です。
+
+ここでは、自分のワークスペースに EDCBNotifier 用のチャンネルを作成して、そこに通知を送れるようにしてみます。
+
+まず、EDCBNotifier 用のチャンネルを作成します（既存のチャンネルを使用することもできます）。
+
+次に、Slack の [App ディレクトリ](https://slack.com/apps) から「Incoming Webhook」アプリを検索してインストールします。  
+すでにインストール済みの場合は、設定画面から「Incoming Webhook インテグレーションの追加」を選択します。
+
+投稿先のチャンネルを選択する画面が表示されるので、先ほど作成した EDCBNotifier 用のチャンネル（または任意のチャンネル）を選択します。
+
+Webhook URL が表示されるので、この URL をコピーします。URL は `https://hooks.slack.com/services/...` の形式です。
+
+> Webhook URL は秘密情報です。他人に知られないように注意してください。
+
+最後に EDCBNotifier.yaml を開き、**コピーした Webhook の URL を [Slack Webhook] セクションの webhook_url に設定します。**
+
+**これで、Slack に通知を送れるようになりました！**
+
+5つあるバッチファイルのうちのどれかを実行してみましょう。Webhook を設定したチャンネルに EDCBNotifier からの通知が届いていると思います。
+
+> **Note**  
+> Slack の Incoming Webhook では画像の直接送信はサポートされていません。画像を送信したい場合は、Slack API の `files.upload` メソッドを使用する必要があります。
+
+### 6. Twitter (ツイート・ダイレクトメッセージ)
 
 Twitter にツイートやダイレクトメッセージを送信するには、Consumer Key (API Key) / Consumer Secret (API Secret Key) / Access Token / Access Token Secret の4つのトークンが必要になります。
 

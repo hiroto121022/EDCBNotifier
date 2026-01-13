@@ -145,3 +145,4 @@ EDCBNotifier/EDCBNotifier.yaml
 EDCBNotifier/EDCBNotifier.build/
 EDCBNotifier/EDCBNotifier.dist/
 EDCBNotifier/EDCBNotifier.onefile-build/
+.DS_Store
