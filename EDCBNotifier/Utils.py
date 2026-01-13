@@ -28,7 +28,9 @@ class Utils:
         """
 
         # 実行時刻
-        time = datetime.datetime.now()
+        # Wine環境下でのUTC問題を回避するため、明示的にJST（UTC+9）を指定
+        JST = datetime.timezone(datetime.timedelta(hours=9))
+        time = datetime.datetime.now(JST)
 
         # 値が存在しなかった場合の初期値
         macro_default = '--'
@@ -296,7 +298,8 @@ class Utils:
         Returns:
             str: EDCBNotifier の実行時刻
         """
-        return datetime.datetime.now().strftime('%Y/%m/%d %H:%M:%S')
+        JST = datetime.timezone(datetime.timedelta(hours=9))
+        return datetime.datetime.now(JST).strftime('%Y/%m/%d %H:%M:%S')
 
 
     @staticmethod
@@ -308,8 +311,9 @@ class Utils:
         Returns:
             str: EDCBNotifier の実行日
         """
+        JST = datetime.timezone(datetime.timedelta(hours=9))
         weeklist = ['月', '火', '水', '木', '金', '土', '日']
-        return weeklist[datetime.datetime.now().weekday()]
+        return weeklist[datetime.datetime.now(JST).weekday()]
 
 
     @staticmethod
