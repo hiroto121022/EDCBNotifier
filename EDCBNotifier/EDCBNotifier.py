@@ -153,23 +153,33 @@ def main():
     if 'Slack' in CONFIG['general']['notify_type']:
 
         print('-' * TERMINAL_WIDTH)
-
-        slack = Slack(CONFIG['slack']['webhook_url'])
+        print('[Slack] Starting Slack notification...')
 
         try:
-            result_slack:dict = slack.sendMessage(message, image_path=image)
-        except Exception as error:
-            print(f'[Slack] Result: Failed')
-            print(f'[Slack] {colorama.Fore.RED}Error: {error}')
+            slack = Slack(CONFIG['slack']['webhook_url'])
+            print('[Slack] Slack object created')
+        except Exception as e:
+            print(f'[Slack] Failed to create Slack object: {e}')
+            import traceback
+            traceback.print_exc()
         else:
-            if result_slack['status'] != 200:
-                # ステータスが 200 以外（失敗）
-                print(f'[Slack] Result: Failed (Code: {result_slack["status"]})')
-                print(f'[Slack] {colorama.Fore.RED}Response: {result_slack["response"]}')
+            try:
+                result_slack:dict = slack.sendMessage(message, image_path=image)
+                print(f'[Slack] sendMessage returned: {result_slack}')
+            except Exception as error:
+                print(f'[Slack] Result: Failed')
+                print(f'[Slack] {colorama.Fore.RED}Error: {error}')
+                import traceback
+                traceback.print_exc()
             else:
-                # ステータスが 200（成功）
-                print(f'[Slack] Result: Success (Code: {result_slack["status"]})')
-                print(f'[Slack] Response: {result_slack["response"]}')
+                if result_slack['status'] != 200:
+                    # ステータスが 200 以外（失敗）
+                    print(f'[Slack] Result: Failed (Code: {result_slack["status"]})')
+                    print(f'[Slack] {colorama.Fore.RED}Response: {result_slack["response"]}')
+                else:
+                    # ステータスが 200（成功）
+                    print(f'[Slack] Result: Success (Code: {result_slack["status"]})')
+                    print(f'[Slack] Response: {result_slack["response"]}')
 
     # Twitter API を初期化
     if 'Tweet' in CONFIG['general']['notify_type'] or 'DirectMessage' in CONFIG['general']['notify_type']:
