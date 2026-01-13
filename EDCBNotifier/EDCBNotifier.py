@@ -89,9 +89,6 @@ def main():
 
     print('Message: ' + message.replace('\n', '\n         '))
 
-    # デバッグ: 通知タイプを表示
-    print(f'Notify Types: {CONFIG["general"]["notify_type"]}')
-
     # 送信する画像
     # パスをそのまま利用
     if (CONFIG['general']['notify_image'] is not None) and (os.path.isfile(CONFIG['general']['notify_image'])):
